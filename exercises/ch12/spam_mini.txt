@@ -1,0 +1,6 @@
+ham	Go lets go
+ham	Ok I go
+spam	Free entry, urgent!
+ham	too early
+ham	Nah I don't think so
+spam	Urgent! Free money darling
