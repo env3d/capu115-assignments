@@ -2,49 +2,37 @@ import unittest
 from main import *
 
 # Add imports here
-from unittest.mock import patch, Mock, MagicMock
-
+from unittest.mock import patch, MagicMock
 
 class UnitTests(unittest.TestCase):
 
-    def test_palindrome(self):
+    def test_dna_to_code(self):
         # Enter code here
-        with patch('main.palindrome', side_effect=palindrome) as mock_func:
-            assert mock_func("abba") == True
-            assert len(mock_func.mock_calls) >= 2
+        assert(dna_to_code('A') == '10')
+        assert(dna_to_code('T') == '00')
+        assert(dna_to_code('G') == '11')
+        assert(dna_to_code('C') == '01')
 
-        with patch('main.palindrome', side_effect=palindrome) as mock_func:
-            assert mock_func("abca") == False
-            assert len(mock_func.mock_calls) == 2
 
-    def test_countw(self):
+    def test_draw_coded(self):
         # Enter code here
-        with patch('main.countw', side_effect=countw) as mock_func:
-            assert mock_func("awwawwaww") == 6
-            assert len(mock_func.mock_calls) >= 9
+        with patch('main.draw_0') as mock_draw_0:
+            with patch('main.draw_1') as mock_draw_1:
+                draw_coded('0001','red')
+                assert(len(mock_draw_0.mock_calls) == 3)
+                assert(len(mock_draw_1.mock_calls) == 1)
 
-    def test_reverse(self):
-        # Enter code here
-        with patch('main.reverse', side_effect=reverse) as mock_func:
-            l = mock_func([1,2,3,4,5])
-            assert l == [5,4,3,2,1]
-            assert len(mock_func.mock_calls) >= 5
 
-    def test_square_lst(self):
+    def test_visualize(self):
         # Enter code here
-        with patch('main.square_lst', side_effect=square_lst) as mock_func:
-            a = mock_func([1,2,3,4,5])
-            assert a == [1,4,9,16,25]
-            assert len(mock_func.mock_calls) >= 5
+        with patch('main.draw_coded') as mock_draw_coded:
+            with patch('main.dna_to_code') as mock_dna_to_code:
+                visualize('ATGC', 'blue')
+                #assert(mock_dna_to_code.called_once())
+                #assert(mock_draw_coded.called_once())
+                assert len(mock_dna_to_code.mock_calls) == 1
+                assert len(mock_draw_coded.mock_calls) == 1
 
-    def test_factorial(self):
-        # Enter code here
-        #assert factorial(5) == 120
-        #assert factorial(10) == 3628800
-        with patch('main.factorial', side_effect=factorial) as fact:
-            a = fact(10)
-            assert a == 3628800
-            assert len(fact.mock_calls) >= 10
 
 if __name__ == '__main__':
     s = unittest.TestLoader().loadTestsFromTestCase(UnitTests)

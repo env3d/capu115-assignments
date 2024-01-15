@@ -1,0 +1,1 @@
+Each lab number correspond to the associate textbook chapter.

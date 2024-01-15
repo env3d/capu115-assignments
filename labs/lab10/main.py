@@ -1,145 +1,213 @@
 """
-Lab 10
 
-This lab is all about working with files.  The gerenal pattern for working
-with files to use loops and process a file one line at a time.
+Lab 9: Lists
 
-The typical reason why we work with files is because these files are too big or
-change all the time so the data cannot be included inside our program.  
+Learning Objectives:
 
-For this lab We are going to use data from IMDb (Internet Movie Database).  I
-have prepared 2 data files for you (only contains data from 2020-present):
+ - Practice using lists and and list indexing,
+ - Practice using loops,
+ - Practice writing functions.
 
- - title.basics.tsv.gz - Contains the following fields for titles:
 
-    tconst (string) - alphanumeric unique identifier of the title
-    titleType (string) – the type/format of the title (This file only contain movie type)
-    primaryTitle (string) – the more popular title / the title used by the filmmakers 
-                            on promotional materials at the point of release
-    originalTitle (string) - original title, in the original language
-    isAdult (boolean) - 0: non-adult title; 1: adult title
-    startYear (YYYY) – represents the release year of a title.
-    endYear (YYYY) – TV Series end year. \N for all other title types
-    runtimeMinutes – primary runtime of the title, in minutes
-    genres (string array) – includes up to three genres associated with the title
-    
- - title.ratings.tsv.gz – Contains the IMDb rating and votes information for titles
- 
-    tconst (string) - alphanumeric unique identifier of the title
-    averageRating – weighted average of all the individual user ratings
-    numVotes - number of votes the title has received
+Background
 
-These files are similar to chapter 11.4 of the textbook in that you 
-can use line.split() to separate each line into fields.
+In recent years, AI advances have allowed computers to perform functions that used to be the exclusive domain of 
+human beings.  One of these fields is for computers to understand natural languages.
 
-The details of these files can be found at https://www.imdb.com/interfaces/
+Understanding may be a bit of an overstatement, as you will see, the AI system is simply providing us a
+function where the input is a sentence, and it returns the sentence's sentiment as a number.
 
-"""
+Your job is to use this AI to analyze live newsfeeds from reddit, a popular news forum.
 
-"""
-Exercise 1
+I have provided you with the following 2 functions:
 
-Unlike a list, you cannot simply use the len() function find 
-out how many lines a file has.  You have to actually loop over 
-a file an use the accumulator pattern to count the lines.
+    get_sentiment(sentence) - given a sentence (string), it returns a number indiciating the sentiment (or emotion) of the 
+    sentence.  Note the following interaction:
 
-Using the technique described in 
-https://runestone.academy/ns/books/published/thinkcspy/Files/Iteratingoverlinesinafile.html
-complete the following function so it returns the number of 
-lines in the file title.basics.tsv
-"""
-def count_titles():
-    f = open('title.basics.tsv')    
+    > get_sentiment('this is going to be a great day!')
+    0.6588
+    > get_sentiment('i hate rainy mornings!')
+    -0.6476
+
+    The number returned is of float type and in the range of [-1.0, 1.0].  The higher the number, the more positive the sentence,
+    and vice-versa/
+
+    get_reddit_news() - retrieves a list of news titles from reddit's 'worldnews' forum.  
     
 
-    f.close()
-    return 0
+You will need to use these functions to complete the exercises.  Pretty much all exercises require you to loop over a list 
+of itmes using a for loop and process each item in the list.
+
+"""
+
+
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import nltk
+from urllib.request import urlopen, Request
+import json
+
+nltk.download('vader_lexicon')
+sid = SentimentIntensityAnalyzer()
+
+
+##### You will use the following functions to complete the exercises #######
+
+"""
+The get_sentiment() function returns a number between -1 and 1 for a given string (sentence).  
+The higher the number, the more positive the sentiment is.  
+"""
+
+
+def get_sentiment(sentence):     
+    return sid.polarity_scores(sentence)['compound']
 
 
 """
-Exercise 2
+The get_reddit_news function return a list of current world news titles from reddit's worldnews 
+"""
 
-In the file title.basics.tsv, the 5th field contains a string indicating
-if the title belongs in the "adult" category.  Complete the following 
-function which returns the number of adult titles in title.basics.tsv.
+def get_reddit_news(url = 'https://www.reddit.com/r/worldnews/.json'):
+    my_socket = urlopen(Request(url, headers={'User-Agent':'abcde'}))
+    dta = my_socket.read()
+    reddit_data = json.loads(dta)    
+    titles = [x['data']['title'] for x in reddit_data['data']['children']]
+    return titles
 
-You will need to first split each line into fields (as shown in 11.4), 
-and then use an IF statement inside the loop to selectively count the titles.
+
+####### Start of the exercises #########
 
 """
-def count_adult_titles():
-    f = open('title.basics.tsv')
+Exercise 1:
+
+Given a list of sentences as input, return a list of corresponding sentiments
+
+Here is how I would use the function:
+> get_sentiments(['good day!','terrible day'])
+[0.4926, -0.4767]
+
+
+"""
+def get_sentiments(list_of_sentences):
+    sentiment_list = []
+
+    # use the accumulator patern here as per Chatper 10.22    
     
+    return sentiment_list
 
+
+"""
+Exercise 2:
+
+Given a list of sentences as input, return the maximum (most positive) score
+
+Here is how I would use the function:
+
+> get_max_score(['good day!','terrible day'])
+0.4926
+
+"""
+
+def get_max_score(list_of_sentences):
+    # first we get a list of scores from previous exercise
+    scores = get_sentiments(list_of_sentences)
+
+    # now we find the max score
+    max_score = 0
+
+    # use the acculmulator as per 10.18.1
     
-    f.close()
-    return 0
+    return max_score
 
 """
-Exercise 3
+Exercise 3:
 
-Similar to the previous exercise, but count the number of "Romance" titles.
+Given a list of sentences as input, return the minimum (most negative) score
 
-Note that the genre is stored in the 9th field, but since a movie can have mutiple
-genres, it is a string separated by commas.
+Here is how I would use the function:
 
-For example, the following is the entry for 'The Hunger Games':
-tt1392170 movie The_Hunger_Games The_Hunger_Games 0 2012 \N 142 Action,Adventure,Sci-Fi
-
-It belongs to 3 genres: Action, Adventure, and Sci-Fi
+>get_min_score(['good day!','terrible day'])
+-0.4767
 
 """
-def count_romance_titles():
-    f = open('title.basics.tsv')
+def get_min_score(list_of_sentences):
+    scores = get_sentiments(list_of_sentences)
+    min_score = 1
 
-    f.close()
-    return 0
+    # same as previous exercise, but find min instead of max
 
-"""
-Exercise 4
-
-Give a movie_title as input, output its title id (field #1)
-If the title is not found, return the empty string ''.
-
-Note that titles are case sentitive and words are separated by underscore (_)
-
-> find_title_id('The_Hunger_Games')
-'tt1392170'
-> find_title_id('The_Avengers')
-'tt0848228'
-> find_title_id('avengers')
-''
+    return min_score
 
 """
-def find_title_id(movie_title):
-    f = open('title.basics.tsv')
+Exercise 4:
 
-    f.close()
+Given is list of sentences, return a list of only positive items.
+
+i.e.
+> positive_only(['good day!','terrible day','I love today'])
+['good day!', 'I love today']
+
+"""
+def positive_only(list_of_sentences):
+    positive_items = []
+    
+    # use the acculmulator pattern.  
+    # for every sentence, we first find out the numerical
+    # sentiment value.  If positive, we add it to 
+    # the return list
+    
+    return positive_items
+
+"""
+Exercise 5:
+
+Given is list of sentences, return a list of only negative items.
+
+i.e.
+> negative_only(['good day!','terrible day','I love today','I feel sad'])
+['terrible day', 'I feel sad']
+
+"""
+def negative_only(list_of_sentences):
+    negative_items = []
+
+    # same as previous but only accumulate negative items
+    
+    return negative_items
+
+
+"""
+Exercise 6:
+
+Return the MOST POSITIVE news from reddit right now (using the get_reddit_news() function)
+
+> get_most_positive_news()
+'Armenia’s Central Bank improves GDP growth forecast from 1.6 to 13% due to mass influx of ‘talented and well-educated’ Russians into the country'
+
+"""
+def get_most_positive_news():
+    news_items = get_reddit_news()    
+    max_score = get_max_score(news_items)
+
+    # search each news item from reddit, and
+    # return the item that matches the max_score
+
     return ''
 
-    
 """
-Exercise 5
+Exercise 7:
 
-Give a movie_title as input, output its IMDB rating
-If the title is not found, return -1.
+Return the MOST NEGATIVE news from reddit right now (using the get_reddit_news() function)
 
-Note that titles are case sentitive and words are separated by underscore (_)
-
-> get_rating('The_Hunger_Games')
-7.2
-> get_rating('The_Avengers')
-8.0
-> get_rating('avengers')
--1.0 
-
+> get_most_negative_news()
+'Ukraine Sends Stark Warning to Belarus Against Joining War'
 
 """
-def get_rating(movie_title):
+def get_most_negative_news():
+    news_items = get_reddit_news()
+    min_score = get_min_score(news_items)
 
-    f = open('title.ratings.tsv')
+    # same as previous but return the item with most
+    # negative score
 
-            
-    f.close()
-    return -1
-
+    return ''
+        

@@ -1,150 +1,145 @@
 """
-Bioinformatics is a field where biologists use the power of computers
-to help analyze biological data, such as DNA.
+Lab 10
 
-DNA can be represented as a long string of 4 characters: A, T, G, and C.
+This lab is all about working with files.  The gerenal pattern for working
+with files to use loops and process a file one line at a time.
 
-In this lab, we will create a graph of DNA using the squiggle method
-as described in the The following link:
+The typical reason why we work with files is because these files are too big or
+change all the time so the data cannot be included inside our program.  
 
- - https://squiggle.readthedocs.io/en/latest/methods.html#squiggle
+For this lab We are going to use data from IMDb (Internet Movie Database).  I
+have prepared 2 data files for you (only contains data from 2020-present):
 
-Our DNA data comes from the following article:
+ - title.basics.tsv.gz - Contains the following fields for titles:
 
- - https://gab41.lab41.org/the-walk-of-life-4d352212a099
+    tconst (string) - alphanumeric unique identifier of the title
+    titleType (string) – the type/format of the title (This file only contain movie type)
+    primaryTitle (string) – the more popular title / the title used by the filmmakers 
+                            on promotional materials at the point of release
+    originalTitle (string) - original title, in the original language
+    isAdult (boolean) - 0: non-adult title; 1: adult title
+    startYear (YYYY) – represents the release year of a title.
+    endYear (YYYY) – TV Series end year. \N for all other title types
+    runtimeMinutes – primary runtime of the title, in minutes
+    genres (string array) – includes up to three genres associated with the title
+    
+ - title.ratings.tsv.gz – Contains the IMDb rating and votes information for titles
+ 
+    tconst (string) - alphanumeric unique identifier of the title
+    averageRating – weighted average of all the individual user ratings
+    numVotes - number of votes the title has received
 
+These files are similar to chapter 11.4 of the textbook in that you 
+can use line.split() to separate each line into fields.
 
-"""
-import turtle
-
-
-### Testing DNA sequences, implemented as a python dictionary.
-### i.e. DNA['Human'] will return a snippet of the human DNA string
-DNA = {
-    'Human' :  'ATGGTGCATCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTGGACCCAGAGGTTCTTTGAGTCCTTTGGGGATCTGTCCACTCCTGATGCTGTTATGGGCAACCCTAAGGTGAAGGCTCATGGCAAGAAAGTGCTCGGTGCCTTTAGTGATGGCCTGGCTCACCTGGACAACCTCAAGGGCACCTTTGCCACACTGAGTGAGCTGCACTGTGACAAGCTGCACGTGGATCCTGAGAACTTCAGGCTCCTGGGCAACGTGCTGGTCTGTGTGCTGGCCCATCACTTTGGCAAAGAATTCACCCCACCAGTGCAGGCTGCCTATCAGAAAGTGGTGGCTGGTGTGGCTAATGCCCTGGCCCACAAGTATCACTAA',
-    'Rat' : 'ATGGTGCACCTGACTGATGCTGAGAAGGCTGCTGTTAATGGCCTGTGGGGAAAGGTGAACCCTGATGATGTTGGTGGCGAGGCCCTGGGCAGGCTGCTGGTTGTCTACCCTTGGACCCAGAGGTACTTTGATAGCTTTGGGGACCTGTCCTCTGCCTCTGCTATCATGGGTAACCCTAAGGTGAAGGCCCATGGCAAGAAGGTGATAAACGCCTTCAATGATGGCCTGAAACACTTGGACAACCTCAAGGGCACCTTTGCTCATCTGAGTGAACTCCACTGTGACAAGCTGCATGTGGATCCTGAGAACTTCAGGCTCCTGGGCAACATGATTGTGATTGTGTTGGGCCACCACCTGGGCAAGGAATTCTCCCCCTGTGCACAGGCTGCCTTCCAGAAGGTGGTGGCTGGAGTGGCCAGTGCCCTGGCTCACAAGTACCACTAA', 
-    'Rhesus' :  'ATGGTGCATCTGACTCCTGAGGAGAAGAATGCCGTCACCACCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTGGACCCAGAGGTTCTTTGAGTCCTTTGGGGATCTGTCCTCTCCTGATGCTGTTATGGGCAACCCTAAGGTGAAGGCTCATGGCAAGAAAGTGCTTGGTGCCTTTAGTGATGGCCTGAATCACCTGGACAACCTCAAGGGTACCTTTGCCCAGCTCAGTGAGCTGCACTGTGACAAGCTGCATGTGGATCCTGAGAACTTCAAGCTCCTGGGCAACGTGCTGGTGTGTGTGCTGGCCCATCACTTTGGCAAAGAATTCACCCCGCAAGTGCAGGCTGCCTATCAGAAAGTGGTGGCTGGTGTGGCTAATGCCCTGGCCCACAAGTACCACTAA', 
-    'Chimpanzee' : 'ATGGTGCACCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTGGACCCAGAGGTTCTTTGAGTCCTTTGGGGATCTGTCCACTCCTGATGCTGTTATGGGCAACCCTAAGGTGAAGGCTCATGGCAAGAAAGTGCTCGGTGCCTTTAGTGATGGCCTGGCTCACCTGGACAACCTCAAGGGCACCTTTGCCACACTGAGTGAGCTGCACTGTGACAAGCTGCACGTGGATCCTGAGAACTTCAGGCTCCTGGGCAACGTGCTGGTCTGTGTGCTGGCCCATCACTTTGGCAAAGAATTCACCCCACCAGTGCAGGCTGCCTATCAGAAAGTGGTGGCTGGTGTGGCTAATGCCCTGGCCCACAAGTATCACTAA'
-}
-"""
-
-Squiggle’s DNA visualization method is based on the UCSC .2bit format 
-and the Qi et. al Huffman coding method. In essence, a DNA sequence is 
-first converted into binary using the 2bit encoding scheme that maps 
-T to 00, C to 01, A to 10, and G to 11. For example:
-
-ATGC
-
-becomes:
-
-10001101
+The details of these files can be found at https://www.imdb.com/interfaces/
 
 """
-
-dna_to_code_dict = {
-    'T': '00',
-    'C': '01',
-    'A': '10',
-    'G': '11'
-}
 
 """
 Exercise 1
 
-Given a DNA sequence, return a coded sequence of 1's and 0's.
-You will use the dna_to_code_dict to map between base and
-the code.
+Unlike a list, you cannot simply use the len() function find 
+out how many lines a file has.  You have to actually loop over 
+a file an use the accumulator pattern to count the lines.
 
-HINT: this is extrememly similar to the book's exercise 12.7.5 
-where you implement a translation service.
-
-i.e.
-
-> dna_to_code('A')
-'10'
-> dna_to_code('T')
-'00'
-> dna_to_code('G')
-'11'
-> dna_to_code('C')
-'01'
-> dna_to_code('AA')
-'1010'
-> dna_to_code('AATT')
-'10100000'
-
+Using the technique described in 
+https://runestone.academy/ns/books/published/thinkcspy/Files/Iteratingoverlinesinafile.html
+complete the following function so it returns the number of 
+lines in the file title.basics.tsv
 """
-
-def dna_to_code(dna):
-    coded = ''
-
-    # use the accumulator pattern to process each character of
-    # the input dna string.  Convert each character to it's
-    # coded counterpart using dna_to_code_dict
+def count_titles():
+    f = open('title.basics.tsv')    
     
-    return coded
 
-
-### These draw functions are provided for you to use in Exercise 2
-    
-def draw_0(t):    
-    t.right(80)
-    t.forward(3)
-    t.left(80)
-
-def draw_1(t):
-    t.left(80)
-    t.forward(3)
-    t.right(80)
-    
-######
+    f.close()
+    return 0
 
 
 """
 Exercise 2
 
-Given a coded sequence and a color, graph the sequence
-by looping over every character (either 0 or 1) and call 
-the appropriate draw function provided above.
+In the file title.basics.tsv, the 5th field contains a string indicating
+if the title belongs in the "adult" category.  Complete the following 
+function which returns the number of adult titles in title.basics.tsv.
+
+You will need to first split each line into fields (as shown in 11.4), 
+and then use an IF statement inside the loop to selectively count the titles.
 
 """
-def draw_coded(coded, color):
-    # A turtle is already setup for you
-    t = turtle.Turtle()
-    t.penup()
-    t.speed(0)
-    t.goto(-300,-100)
-    t.color(color)
-    t.pendown()
+def count_adult_titles():
+    f = open('title.basics.tsv')
+    
 
-    # process every character in the coded string and
-    # call the corresponding draw function as provided
-    # above.
+    
+    f.close()
+    return 0
 
 """
 Exercise 3
 
-With draw_coded written, we can create a DNA visualization
-using the following sequence of commands:
+Similar to the previous exercise, but count the number of "Romance" titles.
 
-> code = dna_to_code('AGTTGC')
-> draw_coded(code, 'red')
+Note that the genre is stored in the 9th field, but since a movie can have mutiple
+genres, it is a string separated by commas.
 
-To make it more convenient, complete the following
-visualize function such that we can pass in a DNA sequence
-instead of a coded sequence.  Our user will mainly 
-interact with visualize instead of draw_coded.
+For example, the following is the entry for 'The Hunger Games':
+tt1392170 movie The_Hunger_Games The_Hunger_Games 0 2012 \N 142 Action,Adventure,Sci-Fi
+
+It belongs to 3 genres: Action, Adventure, and Sci-Fi
+
 """
-def visualize(dna, color):
-    # perform the entire operation of visualizing a
-    # DNA sequence
-    pass
+def count_romance_titles():
+    f = open('title.basics.tsv')
+
+    f.close()
+    return 0
+
+"""
+Exercise 4
+
+Give a movie_title as input, output its title id (field #1)
+If the title is not found, return the empty string ''.
+
+Note that titles are case sentitive and words are separated by underscore (_)
+
+> find_title_id('The_Hunger_Games')
+'tt1392170'
+> find_title_id('The_Avengers')
+'tt0848228'
+> find_title_id('avengers')
+''
+
+"""
+def find_title_id(movie_title):
+    f = open('title.basics.tsv')
+
+    f.close()
+    return ''
+
     
-# The main function simply visualize 4 sample DNA sequences
-# in different colors.  Your output would look similar to the
-# image at https://gab41.lab41.org/the-walk-of-life-4d352212a099 
-def main():
-    visualize(DNA['Human'],'red')
-    visualize(DNA['Rat'],'green')
-    visualize(DNA['Rhesus'],'blue')
-    visualize(DNA['Chimpanzee'],'pink')
+"""
+Exercise 5
+
+Give a movie_title as input, output its IMDB rating
+If the title is not found, return -1.
+
+Note that titles are case sentitive and words are separated by underscore (_)
+
+> get_rating('The_Hunger_Games')
+7.2
+> get_rating('The_Avengers')
+8.0
+> get_rating('avengers')
+-1.0 
+
+
+"""
+def get_rating(movie_title):
+
+    f = open('title.ratings.tsv')
+
+            
+    f.close()
+    return -1
+

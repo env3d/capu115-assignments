@@ -2,37 +2,62 @@ import unittest
 from main import *
 
 # Add imports here
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, mock_open
+
 
 class UnitTests(unittest.TestCase):
 
-    def test_dna_to_code(self):
+    def test_count_titles(self):
         # Enter code here
-        assert(dna_to_code('A') == '10')
-        assert(dna_to_code('T') == '00')
-        assert(dna_to_code('G') == '11')
-        assert(dna_to_code('C') == '01')
 
+        fake_titles = '\n'.join(
+          ["1 2 3 4 0 6 7 8 9"]*10 + ["1 2 3 4 1 6 7 8 9"]*5
+        )
+        with patch("builtins.open", mock_open(read_data=fake_titles)):
+            n = count_titles()
+        assert(n == 15), n
 
-    def test_draw_coded(self):
+    def test_count_adult_titles(self):
         # Enter code here
-        with patch('main.draw_0') as mock_draw_0:
-            with patch('main.draw_1') as mock_draw_1:
-                draw_coded('0001','red')
-                assert(len(mock_draw_0.mock_calls) == 3)
-                assert(len(mock_draw_1.mock_calls) == 1)
+        fake_titles = '\n'.join(
+          ["1 2 3 4 0 6 7 8 9"]*10 + ["1 2 3 4 1 6 7 8 9"]*5
+        )
+        with patch("builtins.open", mock_open(read_data=fake_titles)):
+            n = count_adult_titles()
+        assert(n == 5), n
 
-
-    def test_visualize(self):
+    def test_count_romance_titles(self):
         # Enter code here
-        with patch('main.draw_coded') as mock_draw_coded:
-            with patch('main.dna_to_code') as mock_dna_to_code:
-                visualize('ATGC', 'blue')
-                #assert(mock_dna_to_code.called_once())
-                #assert(mock_draw_coded.called_once())
-                assert len(mock_dna_to_code.mock_calls) == 1
-                assert len(mock_draw_coded.mock_calls) == 1
+        fake_titles = '\n'.join(
+          ["1 2 3 4 0 6 7 8 Romance,abc"]*5 + ["1 2 3 4 1 6 7 8 abc,Romance"]*5 + ["1 2 3 4 1 6 7 8 abc"]*5
+        )
+        with patch("builtins.open", mock_open(read_data=fake_titles)):
+            n = count_romance_titles()
+        assert(n == 10), n
 
+    def test_find_title_id(self):
+        # Enter code here
+        fake_titles = '\n'.join(
+          ["1 2 3 4 0 6 7 8 Romance,abc"]*5 + ["1 2 3 4 1 6 7 8 abc,Romance"]*5 + ["t1 t2 t3 t4 t5 t6 t7 t8 t9"] + ["1 2 3 4 1 6 7 8 abc"]*5
+        )
+        with patch("builtins.open", mock_open(read_data=fake_titles)):
+            n = find_title_id('t3')
+            d = find_title_id('aaa')
+        assert(n == 't1'), n
+        assert(d == ''), d
+
+    def test_get_rating(self):
+        # Enter code here
+        fake_titles = '\n'.join(
+          ["1 2 3 4 0 6 7 8 Romance,abc"]*5 + ["1 2 3 4 1 6 7 8 abc,Romance"]*5 + ["t1 10 t3 t4 t5 t6 t7 t8 t9"] + ["1 2 3 4 1 6 7 8 abc"]*5
+        )
+        with patch("builtins.open", mock_open(read_data=fake_titles)):
+            with patch("main.find_title_id", return_value='t1'):
+                n = get_rating('t3')
+                assert(n == '10' or n == 10), 'Not returning the correct rating'
+            with patch("main.find_title_id", return_value='aaa'):
+                d = get_rating('aaa')
+                assert(d == -1), 'When title not found, need to return -1'
 
 if __name__ == '__main__':
     s = unittest.TestLoader().loadTestsFromTestCase(UnitTests)
