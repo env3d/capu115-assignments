@@ -47,4 +47,4 @@ IFS="$oldIFS"
 cat _grades.csv
 
 # clean up
-rm -fr _students _grades.csv
+rm -fr _students 
