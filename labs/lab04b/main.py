@@ -1,5 +1,5 @@
 """
-    Lab 5: Draw Alkane chains (organic chem. visualization)
+    Lab 4b: Draw Alkane chains (organic chem. visualization)
            (starter project by J. Madar, based on original idea from T. Dakic and J. Fall)    
 
     Objectives 

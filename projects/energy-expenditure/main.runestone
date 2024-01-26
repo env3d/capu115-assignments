@@ -1,0 +1,186 @@
+.. activecode:: capu115_JM_7_energy_1
+   :language: python
+   :autograde: unittest
+   
+   Part of the job of a software professional is to
+   create solutions for other fields.  This exercise is about
+   understanding the field of kinesiology.
+
+   Details of this project can be found at 
+
+   https://docs.google.com/document/d/1eME5AMNNMwkvRzPWuw8GyE_kx1jkKGJfDcW0enAMFXQ/edit?usp=sharing
+    
+   The first task is to calculate bmr based on the following inputs:
+
+   weight in kilos
+
+   height in centimeters
+   
+   gender is a string of 1 character, either 'M' or 'F'
+   
+   age is an integer
+    
+   HINT: you will need to use different formulas for different gender
+   perfect opportunity to use a simple if statement
+
+   here's a quick overview of if: https://www.w3schools.com/python/python_conditions.asp 
+
+   ~~~~   
+   def calculate_bmr(weight, height, gender, age):
+       return 0       
+   ====
+   from unittest.gui import TestCaseGui
+   
+   class myTests(TestCaseGui):   
+       def testOne(self):
+           def male_bmr(weight, height, age): return 66 + 13.7 * weight + 5 * height - 6.8 * age
+           for i in [12,33,55,76]:
+               self.assertAlmostEqual(calculate_bmr(i,i,'M',i), male_bmr(i,i,i)) 
+	   def female_bmr(weight, height, age): return 655 +  9.6 * weight + 1.8 * height - 4.7 * age
+           for i in [12,33,55,76]:	   	   
+               self.assertAlmostEqual(calculate_bmr(i,i,'F',i), female_bmr(i,i,i))
+	       
+   myTests().main()
+   
+.. activecode:: capu115_JM_7_energy_2
+   :language: python
+   :autograde: unittest
+
+   There are 2 inputs to this function, the bmr and activity_factor
+   The activity factor is based on the following table:
+    
+   Sedentary - mostly resting with little or no activity  : 0.25
+   
+   Light - occasional unplanned activity e.g. going for a walk, or a swim or skiing: 0.375
+   
+   Moderate - daily planned activity such as short jogs, brisk walk: 0.55
+   
+   Heavy - daily planned workouts (hours or several hours of continuous activity: 0.775
+    
+   For example, if the bmr is 1600 and the person has a sedentary lifestyle, then we would 
+   call the function from the console follows:
+
+   ::
+   
+     print(calculate_activity_expenditure(1600, 0.25))
+     
+   Output
+   
+   ::
+   
+     400.0
+     
+   ~~~~
+   def calculate_activity_expenditure(bmr, activity_factor):    
+       return 0
+   ====
+   from unittest.gui import TestCaseGui
+   
+   class myTests(TestCaseGui):   
+       def testOne(self):   
+           for i in [12,33,55,76]:
+               self.assertAlmostEqual( calculate_activity_expenditure(i, 0.55) , i * 0.55 )
+
+   myTests().main()
+
+.. activecode:: capu115_JM_7_energy_3
+   :language: python
+   :autograde: unittest
+
+   Food expenditure is calculated as 5% of the daily caloric intake
+
+   ~~~~
+   def calculate_food_expenditure(daily_calories):
+       return 0
+   ====
+   from unittest.gui import TestCaseGui
+   
+   class myTests(TestCaseGui):   
+       def testOne(self):   
+           for i in [12,33,55,76]:
+	       self.assertAlmostEqual(calculate_food_expenditure(i), i*0.05)
+
+   myTests().main()
+
+.. activecode:: capu115_JM_7_energy_4
+   :language: python
+   :include: capu115_JM_7_energy_1, capu115_JM_7_energy_2, capu115_JM_7_energy_3
+   :autograde: unittest
+
+
+   The final function that puts everything together.
+   The calculate_energy_expenditure function calls relies on the previous
+   defined functions to calculate the energy expenditure for an indivudual.
+
+   Pay attention to the following input data types:
+
+   weight - number in kg
+   
+   height - number in cm
+   
+   gender - String of 1 character, either 'M' or 'F'
+   
+   age - integer
+   
+   calorie_intake - integer
+   
+   activity_level - one of the following strings: Sedentary, Light, Moderate, Heavy
+
+   The total daily expenditure is the sum of bmr, activity expenditure, and food expenditure
+
+   Below is how you would call this function:
+   
+   ::
+   
+     print(calculate_energy_expenditure(70, 170, 'M', 47, 2000, 'Sedentary'))
+
+   Output
+
+   ::
+
+     2044.25
+     
+   ~~~~
+   def calculate_energy_expenditure(weight, height, gender, age, calorie_intake, activity_level):
+       return 0
+   ====
+   # Complete Solution
+   def sol(weight, height, gender, age, daily_calories, activity_factor):
+       if gender == 'M':
+           bmr = 66 + 13.7 * weight + 5 * height - 6.8 * age
+       else:
+           bmr = 655 +  9.6 * weight + 1.8 * height - 4.7 * age
+
+       if activity_factor == 'Sedentary':
+           act = 0.25
+       elif activity_factor == 'Light':
+           act = 0.375
+       elif activity_factor == 'Moderate':
+           act = 0.55
+       elif activity_factor == 'Heavy':
+           act = 0.775
+
+       activity_expenditure = bmr * act
+       food_expenditure = daily_calories * 0.05
+       
+       return bmr + activity_expenditure + food_expenditure
+        
+   from unittest.gui import TestCaseGui
+   import random
+   
+   genders = ['M', 'F']
+   activities = ['Sedentary', 'Light', 'Moderate', 'Heavy']
+
+   class myTests(TestCaseGui):   
+       def testOne(self):   
+           for _ in range(10):
+               w = random.randrange(50, 150)
+               h = random.randrange(120, 210)
+               g = random.choice(genders)
+               act = random.choice(activities)
+               age = random.randrange(18, 100)
+               cal = random.randrange(2000, 4000)
+               self.assertAlmostEqual(calculate_energy_expenditure(w, h, g, age, cal, act), sol(w, h, g, age, cal, act))
+
+   myTests().main()
+   
