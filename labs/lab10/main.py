@@ -1,6 +1,6 @@
 """
 
-Lab 9: Lists
+Challenge 10b: Lists
 
 Learning Objectives:
 

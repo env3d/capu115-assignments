@@ -86,22 +86,20 @@ file, message, image, or video.
 The file encoded_image.gif looks normal, but we actually hid a secret black and white
 image inside the red channel.  Implement the following algorithm:
 
- - The secret image is the same width and size of encoded_image.gif
- - Create a new image to store the secret image
+ - The secret image is the same width and size of encoded.gif
  - Use our nested loop to process each pixel:
      - If the red channel is odd, turn the resulting pixel on the new image to black
      - if the red channel is even, turn the resulting pixel on the new image to red
- - Save the new image to an image called secret.gif
 
 """
 def decodeImage():
-    secret = image.Image("encoded_image.png")
+    secret = image.Image("encoded.png")
     win = image.ImageWin(secret.getWidth(), secret.getHeight())
     
     for x in range(secret.width):
         for y in range(secret.height):
-            # process each x and y location to set the correct pixel color
+            # process each x and y location to set the correct pixel color        
             pass
-
+            
     # don't forget to save the decoded image!
     secret.draw(win)

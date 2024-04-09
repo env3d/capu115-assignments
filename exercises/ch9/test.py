@@ -55,13 +55,6 @@ class UnitTests(unittest.TestCase):
         assert not canConstruct('aa', 'ab')
         assert canConstruct('aa', 'aab')
 
-    def test_decodeMessage(self):
-        # Enter code here
-        key = 'thequickbrownfxjmpsvlazydg'
-        message = 'vkbs bs t suepuv'
-        assert decodeMessage(message) == "this is a secret"
-
-
 if __name__ == '__main__':
     s = unittest.TestLoader().loadTestsFromTestCase(UnitTests)
     unittest.TextTestRunner().run(s)

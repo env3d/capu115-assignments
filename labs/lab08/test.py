@@ -96,26 +96,16 @@ class UnitTests(unittest.TestCase):
 
             with patch.object(image, 'FileImage', return_value=full_red_even) as FileImage:
                 with patch.object(image, 'Image', return_value=full_red_even) as MyImage:
-
                     decodeImage()
-                    assert FileImage.called or MyImage.called, "Must retrieve encoded_image.gif"
-                    assert EmptyImage.called, "Must create a new image to store the decoded message"
 
             with patch.object(image, 'FileImage', return_value=full_red_odd) as FileImage:
                 with patch.object(image, 'Image', return_value=full_red_odd) as MyImage:
-
                     decodeImage()
-                    assert FileImage.called or MyImage.called, "Must retrieve encoded_image.gif"
-                    assert EmptyImage.called, "Must create a new image to store the decoded message"
-
-            num_black = len([x for x in mockImage.setPixel.mock_calls if tuple(x[1][2]) == (0,0,0)])
-            num_white = len([x for x in mockImage.setPixel.mock_calls if tuple(x[1][2]) == (255,255,255)])
-            num_red = len([x for x in mockImage.setPixel.mock_calls if tuple(x[1][2]) == (255,0,0)])
-
-
-            assert (num_black > 0 and (num_white > 0 or num_red > 0))
-            assert (num_black == num_white or num_black == num_red)
-
+            
+            for x in range(10):
+                for y in range(10):
+                    assert (full_red_odd.getPixel(x, y).getColorTuple() == (0,0,0))
+                    assert (full_red_even.getPixel(x,y).getColorTuple() == (255, 0,0))
 
 if __name__ == '__main__':
     s = unittest.TestLoader().loadTestsFromTestCase(UnitTests)
