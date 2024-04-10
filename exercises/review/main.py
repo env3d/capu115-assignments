@@ -21,7 +21,7 @@ def for_loop_with_selection(num):
 def for_loop_with_list(lst):
     count = 0
     for item in lst:
-        if len(item) > 5 == 0:
+        if len(item) > 5:
             count = count + 1
     return count
 
